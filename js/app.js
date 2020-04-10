@@ -6,36 +6,48 @@ const form = document.querySelector('form');
 //  FETCH FUNCTIONS
 // ------------------------------------------
 
-fetch("https://dog.ceo/api/breeds/list")
-  .then( response => response.json())
+function fetchData(url) {
+  return fetch(url)
+    .then(res => res.json());
+}
+
+fetchData("https://dog.ceo/api/breeds/list")
   //.then( data => console.log(data.message))
   .then( data => putInSelect(data.message));
 
-fetch("https://dog.ceo/api/breeds/image/random")
-  .then( response => response.json())
+fetchData("https://dog.ceo/api/breeds/image/random")
   .then( data => generateImage(data.message));
 
-
+//https://dog.ceo/api/breed/hound/images/random
+function fetchBreedImage(){
+  const breed = select.value;
+  const img = card.querySelector("img");
+  const p = card.querySelector("p");
+  //https://dog.ceo/api/breed/hound/images/random
+  fetchData(`https://dog.ceo/api/breed/${breed}/images/random`)
+    .then(data => {
+      img.src = data.message;
+      img.alt = breed;
+      p.textContent = `Click to view more ${breed}s`;
+    });
+}
 // ------------------------------------------
 //  HELPER FUNCTIONS
 // ------------------------------------------
 
-function generateImage(url){
-  var img = document.createElement("img");
-  img.src = url;
-  //console.log(img);
-  var p = document.createElement("p");
-  p.innerHTML = "Click to view images of ...";
-  var card = document.getElementsByClassName("card")[0];
-  card.appendChild(img);
-  card.appendChild(p);
+function generateImage(data){
+  
+  const html = `
+    <img src='${data}' alt>
+    <p>Click to view image if ${select.value}s</p>
+  `;
+  card.innerHTML = html;
 }
 //var img = 'https://images.dog.ceo/breeds/malinois/n02105162_2836.jpg';
 
-function putInSelect(breeds){r
-  document.getElementById("breeds").innerHTML = breeds.map( breed => `<option value="${breed}">${breed}</option>` );
+function putInSelect(breeds){
+  select.innerHTML = breeds.map( breed => `<option value="${breed}">${breed}</option>` ).join('');
 //  <option value="volvo">Volvo</option>
-
 }
 
 
@@ -43,6 +55,8 @@ function putInSelect(breeds){r
 //  EVENT LISTENERS
 // ------------------------------------------
 
+select.addEventListener('change', fetchBreedImage );
+card.addEventListener('click', fetchBreedImage);
 
 
 // ------------------------------------------
