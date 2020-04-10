@@ -13,13 +13,17 @@ function fetchData(url) {
     .catch(error => console.log('Looks like there was a problem', error));
 }
 
-fetchData("https://dog.ceo/api/breeds/list")
-  //.then( data => console.log(data.message))
-  .then( data => putInSelect(data.message));
-
-
-fetchData("https://dog.ceo/api/breeds/image/random")
-  .then( data => generateImage(data.message));
+Promise.all([
+  fetchData("https://dog.ceo/api/breeds/list"),
+  fetchData("https://dog.ceo/api/breeds/image/random")
+])
+.then( data => {
+      const breedList = data[0].message;
+      const randomUmage = data[1].message;
+      
+      putInSelect(breedList);
+      generateImage(randomUmage);
+});
 
 //https://dog.ceo/api/breed/hound/images/random
 function fetchBreedImage(){
